@@ -80,22 +80,11 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
 // показываем позиция нажатого элемента
                Toast.makeText(getBaseContext(), "Position = " + position, Toast.LENGTH_SHORT).show();
            }
-
-
                @Override
                public void onNothingSelected(AdapterView<?> parent) {
-
                }
-
 //
-                                         });
-
-
-
-
-
-
-
+    });
             System.out.println(sensorAccelerometr);
     graph = (GraphView) findViewById(R.id.graph);
     series = new LineGraphSeries<DataPoint>(new DataPoint[]{
