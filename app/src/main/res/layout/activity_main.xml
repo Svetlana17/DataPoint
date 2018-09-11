@@ -12,6 +12,13 @@
 
         android:orientation="horizontal">
     </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </Spinner>
+
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"
         android:layout_marginTop="30dp"

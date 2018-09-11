@@ -10,7 +10,10 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,15 +55,46 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
     private float altha = 0.1f;
     private boolean state;
     private int timer=0;
-
+    String[] data = {"one", "two", "three", "four", "five"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         state = false;
-
-    mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorAccelerometr = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
+  ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, data);
+       adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       Spinner spinner = (Spinner) findViewById(R.id.spinner);
+     spinner.setAdapter(adapter);
+////// заголовок
+      spinner.setPrompt("Title");
+////// выделяем элемен
+ spinner.setSelection(2);
+////// устанавливаем обработчик нажатия
+       spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+           @Override
+           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+// показываем позиция нажатого элемента
+               Toast.makeText(getBaseContext(), "Position = " + position, Toast.LENGTH_SHORT).show();
+           }
+
+
+               @Override
+               public void onNothingSelected(AdapterView<?> parent) {
+
+               }
+
+//
+                                         });
+
+
+
+
+
+
 
             System.out.println(sensorAccelerometr);
     graph = (GraphView) findViewById(R.id.graph);
@@ -154,22 +188,22 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
         graph.addSeries(seriesX);
         graph.addSeries(seriesZ);
 
-        if (!graficflag) {
-            graph.removeSeries(seriesXX);
-            graph.removeSeries(seriesYY);
-            graph.removeSeries(seriesZZ);
-        }
-        else {
+//        if (!graficflag) {
+//            graph.removeSeries(seriesXX);
+//            graph.removeSeries(seriesYY);
+//            graph.removeSeries(seriesZZ);
+//        }
+//        else {
             graph.addSeries(seriesXX);
             graph.addSeries(seriesYY);
             graph.addSeries(seriesZZ);
 
-        }
+//        }
         //*добавление фильтра
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
-                new DataPoint(x, y),
-        });
-        graph.addSeries(series);
+//        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[]{
+//                new DataPoint(x, y),
+//        });
+//        graph.addSeries(series);
     }
     private void addDataPoint(double acceleration) {
         dataPoints[499] = acceleration;
@@ -188,8 +222,9 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
                 while (true) {
                     plotData = true;
                     try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
+                      Thread.sleep(1500);
+                    }
+                    catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
@@ -212,9 +247,29 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
     }
 
     @Override
-    public void onSensorChanged(SensorEvent event) {
+    public void onSensorChanged(final SensorEvent event) {
         if (plotData) {
-            addEntry(event);
+//            addEntry(event);
+            //
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                addEntry(event);
+                            }
+                        });
+
+
+                    }
+
+            }).start();
+
+            //
             plotData = false;
         }
     }
@@ -235,5 +290,6 @@ public class MainActivity extends     AppCompatActivity implements SensorEventLi
         thread.interrupt();
         super.onDestroy();
     }
+
 
 }
